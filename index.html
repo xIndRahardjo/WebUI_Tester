@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎉 Kejutan Spesial 🎉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0e27;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .stage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .stage.active {
+            opacity: 1;
+        }
+
+        .stage-0 {
+            background: radial-gradient(circle at center, #1a1f3a 0%, #0a0e27 100%);
+        }
+
+        .welcome-text {
+            font-size: 3em;
+            color: #f8b500;
+            font-weight: bold;
+            margin-bottom: 30px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .instruction-text {
+            font-size: 1.5em;
+            color: #ffffff;
+            margin-top: 20px;
+        }
+
+        .small-instruction {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.9em;
+            color: #95e1d3;
+        }
+
+        .countdown {
+            font-size: 10em;
+            color: #ffffff;
+            font-weight: bold;
+            animation: pulse 1s ease-in-out;
+        }
+
+        .countdown-circle {
+            width: 250px;
+            height: 250px;
+            border: 5px solid #f8b500;
+            border-radius: 50%;
+            position: absolute;
+            animation: rotate 1s ease-in-out;
+        }
+
+        .message-card {
+            background: #1a1f3a;
+            border: 4px solid #f8b500;
+            border-radius: 20px;
+            padding: 50px 60px;
+            max-width: 800px;
+            text-align: center;
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 100;
+        }
+
+        .message-card::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #f8b500, #4ecdc4, #ff6b9d);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(10px);
+        }
+
+        .corner-dot {
+            width: 12px;
+            height: 12px;
+            background: #f8b500;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .corner-dot.tl { top: -6px; left: -6px; }
+        .corner-dot.tr { top: -6px; right: -6px; }
+        .corner-dot.bl { bottom: -6px; left: -6px; }
+        .corner-dot.br { bottom: -6px; right: -6px; }
+
+        .header-text {
+            font-size: 2.5em;
+            color: #f8b500;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .name-text {
+            font-size: 3em;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+
+        .divider {
+            width: 60%;
+            height: 2px;
+            background: #4ecdc4;
+            margin: 20px auto;
+        }
+
+        .wish-text {
+            font-size: 1.4em;
+            color: #ffffff;
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+
+        .personal-text {
+            font-size: 1.3em;
+            color: #95e1d3;
+            font-style: italic;
+            margin-top: 30px;
+        }
+
+        .date-text {
+            font-size: 1.2em;
+            color: #f8b500;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px #f8b500, 0 0 20px #f8b500; }
+            50% { text-shadow: 0 0 20px #f8b500, 0 0 40px #f8b500; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes rotate {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-text { font-size: 2em; }
+            .instruction-text { font-size: 1.2em; }
+            .countdown { font-size: 6em; }
+            .message-card { padding: 30px 25px; max-width: 90%; }
+            .header-text { font-size: 1.8em; }
+            .name-text { font-size: 2em; }
+            .wish-text { font-size: 1.1em; }
+            .personal-text { font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="stars" id="stars"></div>
+
+    <!-- Stage 0: Welcome -->
+    <div class="stage stage-0 active" id="stage0">
+        <div class="welcome-text">✨ Ada Kejutan Spesial ✨</div>
+        <div class="instruction-text">Klik di mana saja untuk mulai</div>
+        <div class="small-instruction">Tekan 'F11' untuk fullscreen | Refresh untuk mengulang</div>
+    </div>
+
+    <!-- Stage 1: Countdown -->
+    <div class="stage" id="stage1">
+        <div class="countdown-circle"></div>
+        <div class="countdown" id="countdownText">3</div>
+    </div>
+
+    <!-- Stage 2: Balloons (handled by canvas) -->
+
+    <!-- Stage 3: Final Message -->
+    <div class="stage" id="stage3">
+        <div class="message-card">
+            <div class="corner-dot tl"></div>
+            <div class="corner-dot tr"></div>
+            <div class="corner-dot bl"></div>
+            <div class="corner-dot br"></div>
+            
+            <div class="header-text">🎉 SELAMAT ULANG TAHUN 🎉</div>
+            <div class="name-text">RAFFAEL EZRA</div>
+            <div class="divider"></div>
+            
+            <div class="wish-text">Semoga di usia yang baru ini,</div>
+            <div class="wish-text">kamu selalu diberkahi dengan kesehatan,</div>
+            <div class="wish-text">kebahagiaan, dan kesuksesan</div>
+            <div class="wish-text">dalam segala hal yang kamu lakukan!</div>
+            
+            <div class="personal-text">Terima kasih sudah menjadi teman yang luar biasa! 💙</div>
+            <div class="date-text">21 Oktober 2025</div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let stage = 0;
+        let balloons = [];
+        let confetti = [];
+        let animationId;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Create stars background
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 2;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars();
+
+        // Balloon class
+        class Balloon {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 50;
+                this.baseX = this.x;
+                this.speed = Math.random() * 2 + 2;
+                this.swing = Math.random() * Math.PI * 2;
+                this.swingSpeed = Math.random() * 0.05 + 0.03;
+                this.radius = 25;
+                this.color = ['#ff6b9d', '#c44569', '#f8b500', '#4ecdc4', '#95e1d3', '#a8e6cf'][Math.floor(Math.random() * 6)];
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.swing += this.swingSpeed;
+                this.x = this.baseX + Math.sin(this.swing) * 15;
+
+                if (this.y < -100) {
+                    this.y = canvas.height + 50;
+                    this.baseX = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                // Balloon
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Highlight
+                ctx.beginPath();
+                ctx.arc(this.x - 8, this.y - 8, 6, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fill();
+
+                // String
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + this.radius);
+                ctx.lineTo(this.x, this.y + this.radius + 35);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        // Confetti class
+        class Confetti {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -200;
+                this.width = Math.random() * 6 + 6;
+                this.height = Math.random() * 8 + 10;
+                this.speed = Math.random() * 4 + 2;
+                this.drift = Math.random() * 2 - 1;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 10 + 5;
+                this.color = ['#ff6b9d', '#c44569', '#f8b500', '#4ecdc4', '#95e1d3', '#ffd93d', '#a8e6cf', '#ffffff'][Math.floor(Math.random() * 8)];
+            }
+
+            update() {
+                this.y += this.speed;
+                this.x += this.drift;
+                this.x += Math.sin(this.rotation * 0.1) * 1.5;
+                this.rotation += this.rotationSpeed;
+
+                if (this.y > canvas.height + 50) {
+                    this.y = Math.random() * -100 - 20;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+                ctx.restore();
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (stage === 2) {
+                balloons.forEach(balloon => {
+                    balloon.update();
+                    balloon.draw();
+                });
+            }
+
+            if (stage === 3) {
+                confetti.forEach(conf => {
+                    conf.update();
+                    conf.draw();
+                });
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        function showStage(stageNum) {
+            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+            const stageEl = document.getElementById('stage' + stageNum);
+            if (stageEl) {
+                stageEl.classList.add('active');
+            }
+        }
+
+        function countdown(n) {
+            if (n > 0) {
+                document.getElementById('countdownText').textContent = n;
+                setTimeout(() => countdown(n - 1), 1000);
+            } else {
+                startBalloons();
+            }
+        }
+
+        function startBalloons() {
+            stage = 2;
+            showStage(-1); // Hide all stages
+            balloons = [];
+            for (let i = 0; i < 20; i++) {
+                balloons.push(new Balloon());
+            }
+            setTimeout(showFinalMessage, 4000);
+        }
+
+        function showFinalMessage() {
+            stage = 3;
+            confetti = [];
+            for (let i = 0; i < 150; i++) {
+                confetti.push(new Confetti());
+            }
+            showStage(3);
+        }
+
+        // Click handler
+        document.body.addEventListener('click', function() {
+            if (stage === 0) {
+                stage = 1;
+                showStage(1);
+                countdown(3);
+            }
+        });
+
+        animate();
+    </script>
+</body>
+</html>
